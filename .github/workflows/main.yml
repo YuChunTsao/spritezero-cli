@@ -1,0 +1,22 @@
+name: Generate sprites
+on: push
+
+jobs:
+  generate-sprites:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16
+      - run: |
+          npm install
+          mkdir -p output/sprites
+          ./bin/spritezero ./output/sprites/sprite ./test/fixture/input/
+          ./bin/spritezero --ratio=2 ./output/sprites/sprite@2x ./test/fixture/input/
+      - name: Deploy
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.DEPLOY_TOKEN }}
+          publish_dir: ./output/
